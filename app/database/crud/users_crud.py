@@ -5,6 +5,7 @@ from ...fastapi.schemas import users_schemas as schemas
 from ...utils.auth import get_password_hash, verify_password
 
 class CRUDUser:
+    # READ
     async def get_user(self, db: AsyncSession, user_id: int):
         result = await db.execute(select(user_model.User).where(user_model.User.id == user_id))
         return result.scalars().first()
@@ -17,25 +18,23 @@ class CRUDUser:
         result = await db.execute(select(user_model.User).offset(skip).limit(limit))
         return result.scalars().all()
 
+    async def get_user_by_username(self, db: AsyncSession, username: str):
+        result = await db.execute(select(user_model.User).where(user_model.User.username == username))
+        return result.scalars().first()
+
+    # CREATE
     async def create_user(self, db: AsyncSession, user: schemas.UserCreate):
         hashed_password = get_password_hash(user.password)
-        db_user = user_model.User(name=user.name, email=user.email, hashed_password=hashed_password)
+        db_user = user_model.User(name=user.username, email=user.email, hashed_password=hashed_password)
         db.add(db_user)
         await db.commit()
         await db.refresh(db_user)
         return db_user
 
-    async def authenticate_user(self, db: AsyncSession, email: str, password: str):
-        user = await self.get_user_by_email(db, email)
-        if not user:
-            return False
-        if not verify_password(password, user.hashed_password):
-            return False
-        return user
-
+    # UPDATE
     async def update_user(self, db: AsyncSession, db_user: user_model.User, updates: schemas.UserUpdate):
-        if updates.name is not None:
-            db_user.name = updates.name
+        if updates.username is not None:
+            db_user.username = updates.username
         if updates.email is not None:
             db_user.email = updates.email
         if updates.password is not None:
@@ -45,8 +44,18 @@ class CRUDUser:
         await db.refresh(db_user)
         return db_user
 
+    # DELETE
     async def delete_user(self, db: AsyncSession, db_user: user_model.User):
         await db.delete(db_user)
         await db.commit()
+
+    # UTIL
+    async def authenticate_user(self, db: AsyncSession, email: str, password: str):
+        user = await self.get_user_by_email(db, email)
+        if not user:
+            return False
+        if not verify_password(password, user.hashed_password):
+            return False
+        return user
 
 crud_user = CRUDUser()

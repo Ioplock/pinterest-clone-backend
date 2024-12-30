@@ -14,9 +14,12 @@ router = APIRouter(
 
 @router.post("/register", response_model=schemas.UserInDB, status_code=status.HTTP_201_CREATED)
 async def register(user: schemas.UserCreate, db: AsyncSession = Depends(get_db)):
-    db_user = await crud_user.get_user_by_email(db, email=user.email)
-    if db_user:
+    db_user_email = await crud_user.get_user_by_email(db, email=user.email)
+    if db_user_email:
         raise HTTPException(status_code=400, detail="Email already registered")
+    db_user_username = await crud_user.get_user_by_username(db, username=user.username)
+    if db_user_username:
+        raise HTTPException(status_code=400, detail="Username is already taken")
     return await crud_user.create_user(db=db, user=user)
 
 @router.post("/login", response_model=schemas.Token)
