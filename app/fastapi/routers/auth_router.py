@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import timedelta
 
 from ..schemas import users_schemas as schemas
-from ...database.crud import crud
+from ...database.crud.users_crud import crud_user
 from ...database.database import get_db
 from ...utils.auth import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 
@@ -14,14 +14,14 @@ router = APIRouter(
 
 @router.post("/register", response_model=schemas.UserInDB, status_code=status.HTTP_201_CREATED)
 async def register(user: schemas.UserCreate, db: AsyncSession = Depends(get_db)):
-    db_user = await crud.get_user_by_email(db, email=user.email)
+    db_user = await crud_user.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return await crud.create_user(db=db, user=user)
+    return await crud_user.create_user(db=db, user=user)
 
 @router.post("/login", response_model=schemas.Token)
 async def login(user: schemas.UserLogin, db: AsyncSession = Depends(get_db)):
-    db_user = await crud.authenticate_user(db, email=user.email, password=user.password)
+    db_user = await crud_user.authenticate_user(db, email=user.email, password=user.password)
     if not db_user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
