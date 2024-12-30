@@ -1,0 +1,28 @@
+# Ingore any test folders and files
+*test*
+tempCodeRunnerFile.py
+
+# Ignore all __pycache__ directories
+__pycache__/
+
+# Ignore Python bytecode files
+*.pyc
+*.pyo
+
+# Ignore virtual environment directories
+.venv/
+venv/
+.env/
+
+# Ignore other common files and directories
+.DS_Store
+.idea/
+.vscode/
+.ruff_cache/
+.pytest_cache/
+.VSCodeCounter/
+*.log
+*.tmp
+*.env
+*.db
+*.csv
