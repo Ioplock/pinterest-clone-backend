@@ -1,15 +1,11 @@
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..models.pin_model import Pin, PinCollection, PinCollectionAssociation
+from ..models import Pin, PinCollection, PinCollectionAssociation
 
-class CRUDPinCollectionAssociation: # TODO: Add CRUD operations
+class CRUDPinCollectionAssociation:
     # READ
-    
-    # CREATE
-    
-    # UPDATE
-    
-    # DELETE
-    pass
+    async def get_collection_pins(self, db: AsyncSession, collection_id: int):
+        result = await db.execute(select(PinCollectionAssociation).where(PinCollectionAssociation.collection_id == collection_id))
+        return result.scalars().all()
 
 crud_pin = CRUDPinCollectionAssociation()

@@ -5,7 +5,7 @@ from typing import List
 from ..schemas import users_schemas as schemas
 from ...database.crud.users_crud import crud_user
 from ...database.database import get_db
-from ...database.models import user_model
+from ...database import models
 
 from ...utils.auth import decode_access_token
 from fastapi.security import OAuth2PasswordBearer
@@ -30,13 +30,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
-
-@router.post("/", response_model=schemas.UserInDB, status_code=status.HTTP_201_CREATED)
-async def create_user(user: schemas.UserCreate, db: AsyncSession = Depends(get_db)):
-    db_user = await crud_user.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return await crud_user.create_user(db=db, user=user)
 
 @router.get("/{user_id}", response_model=schemas.UserInDB)
 async def read_user(user_id: int, db: AsyncSession = Depends(get_db)):
@@ -67,5 +60,5 @@ async def delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
 
 # Protected endpoint to test JWT
 @router.get("/me", response_model=schemas.UserInDB)
-async def read_current_user(current_user: user_model.User = Depends(get_current_user)):
+async def read_current_user(current_user: models.User = Depends(get_current_user)):
     return current_user

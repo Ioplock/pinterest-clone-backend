@@ -1,6 +1,6 @@
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..models.user_model import User
+from ..models import User
 from ...fastapi.schemas import users_schemas as schemas
 from ...utils.auth import get_password_hash, verify_password
 

@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 @router.post("/register", response_model=schemas.UserInDB, status_code=status.HTTP_201_CREATED)
-async def register(user: schemas.UserCreate, db: AsyncSession = Depends(get_db)):
+async def register(user: schemas.UserCreate, db: AsyncSession = Depends(get_db)): # TODO: Add password and username validation (maybe also email?)
     db_user_email = await crud_user.get_user_by_email(db, email=user.email)
     if db_user_email:
         raise HTTPException(status_code=400, detail="Email already registered")
