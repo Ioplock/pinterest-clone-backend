@@ -2,6 +2,8 @@ from fastapi import FastAPI
 import uvicorn
 
 from .database.database import engine, Base
+from .database.models.user_model import User
+from .database.models.pin_model import Pin, FileType, PinTag, PinCollection, PinCollectionAssociation
 from .fastapi.routers import auth_router, users_router
 
 app = FastAPI(title="FastAPI Async SQLAlchemy Example")
