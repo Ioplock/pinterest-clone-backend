@@ -16,10 +16,11 @@ class Pin(Base):
     owner: Mapped["User"] = relationship(back_populates="pins")
     upload_timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     type_id: Mapped[int] = mapped_column(ForeignKey("file_types.id"), nullable=False)
-    type: Mapped["FileType"] = relationship(back_populates="file_types.pins")
-    tags: Mapped[List["PinTag"]] = relationship(back_populates="pin_tags.pins")
+    type: Mapped["FileType"] = relationship(back_populates="pins")
+    tags: Mapped[List["PinTag"]] = relationship(back_populates="pins")
+    tags_ids: Mapped[List[int]] = mapped_column(ForeignKey("pin_tags.id"), nullable=False)
     collections_association: Mapped[List["PinCollectionAssociation"]] = relationship(
-        back_populates="pin_collection_associations.pins", cascade="all, delete, delete-orphan"
+        back_populates="pin", cascade="all, delete, delete-orphan"
     )
 
 class FileType(Base):
@@ -42,17 +43,17 @@ class PinCollection(Base):
     
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(64), nullable=False)
-    pins_association: Mapped[List["Pin"]] = relationship(
-        back_populates="collections", cascade="all, delete, delete-orphan"
+    pins_association: Mapped[List["PinCollectionAssociation"]] = relationship(
+        back_populates="collection", cascade="all, delete, delete-orphan"
     )
 
 class PinCollectionAssociation(Base):
     __tablename__ = "pin_collection_associations"
     
     id: Mapped[int] = mapped_column(primary_key=True)
-    pin: Mapped["Pin"] = relationship(back_populates="pins.associations")
+    pin: Mapped["Pin"] = relationship(back_populates="collections_association")
     pin_id: Mapped[int] = mapped_column(ForeignKey("pins.id"), nullable=False)
-    collection: Mapped["PinCollection"] = relationship(back_populates="pin_collections.associations")
+    collection: Mapped["PinCollection"] = relationship(back_populates="pins_association")
     collection_id: Mapped[int] = mapped_column(ForeignKey("pin_collections.id"), nullable=False)
     added_to_collection_timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     order_number: Mapped[int] = mapped_column(nullable=True) # TODO: Do something with this thing? Make it auto-generated..?

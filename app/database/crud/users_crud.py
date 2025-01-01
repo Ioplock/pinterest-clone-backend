@@ -25,7 +25,7 @@ class CRUDUser:
     # CREATE
     async def create_user(self, db: AsyncSession, user: schemas.UserCreate):
         hashed_password = get_password_hash(user.password)
-        db_user = User(name=user.username, email=user.email, hashed_password=hashed_password)
+        db_user = User(username=user.username, email=user.email, hashed_password=hashed_password)
         db.add(db_user)
         await db.commit()
         await db.refresh(db_user)
