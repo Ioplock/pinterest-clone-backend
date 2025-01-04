@@ -13,7 +13,7 @@ from fastapi.security import OAuth2PasswordBearer
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 router = APIRouter(
-    prefix="/users",
+    prefix="/api/users",
     tags=["users"],
     responses={404: {"description": "Not found"}},
 )
@@ -59,6 +59,6 @@ async def delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
     return
 
 # Protected endpoint to test JWT
-@router.get("/me", response_model=schemas.UserInDB)
+@router.get("/test/me", response_model=schemas.UserInDB)
 async def read_current_user(current_user: models.User = Depends(get_current_user)):
     return current_user

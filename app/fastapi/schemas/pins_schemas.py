@@ -1,17 +1,20 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional, List
+import json
+
+from ...utils.config import config
 
 class PinCreate(BaseModel):
-    title: str
-    description: Optional[str] = None
-    type: int
-    tags: Optional[List[int]] = None
+    title: str = Field(max_length=config["MAX_PIN_TITLE_LENGTH"])
+    description: Optional[str] = Field(default=None, max_length=config["MAX_PIN_DESCRIPTION_LENGTH"])
+    type: str
+    tags: Optional[List[str]] = Field(default=None, max_length=config["MAX_PIN_TAGS_COUNT"])
 
 class PinUpdate(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    tags: Optional[List[int]] = None
+    title: Optional[str] = Field(max_length=config["MAX_PIN_TITLE_LENGTH"])
+    description: Optional[str] = Field(default=None, max_length=config["MAX_PIN_DESCRIPTION_LENGTH"])
+    tags: Optional[List[str]] = Field(default=None, max_length=config["MAX_PIN_TAGS_COUNT"])
 
 class PinInDB(BaseModel):
     id: int

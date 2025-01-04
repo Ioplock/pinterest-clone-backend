@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional
+import secrets
 
 from passlib.context import CryptContext
 from jose import JWTError, jwt
@@ -9,7 +10,7 @@ import bcrypt
 from ..fastapi.schemas.users_schemas import TokenData
 
 # Secret key to encode JWT tokens
-SECRET_KEY = "test_key"
+SECRET_KEY = secrets.token_hex(16)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -46,5 +47,5 @@ def decode_access_token(token: str) -> Optional[TokenData]:
         if user_id is None:
             return None
         return TokenData(user_id=user_id)
-    except JWTError:
+    except JWTError as e:
         return None

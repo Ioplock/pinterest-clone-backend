@@ -35,4 +35,4 @@ class CRUDFileType:
         await db.delete(db_file_type)
         await db.commit(db_file_type)
 
-crud_pin = CRUDFileType()
+crud_file_type = CRUDFileType()

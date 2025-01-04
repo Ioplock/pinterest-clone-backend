@@ -35,4 +35,4 @@ class CRUDPinTag:
         await db.delete(db_pin_tag)
         await db.commit(db_pin_tag)
 
-crud_pin = CRUDPinTag()
+crud_tag = CRUDPinTag()

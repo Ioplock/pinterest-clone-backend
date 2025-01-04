@@ -8,4 +8,4 @@ class CRUDPinCollectionAssociation:
         result = await db.execute(select(PinCollectionAssociation).where(PinCollectionAssociation.collection_id == collection_id))
         return result.scalars().all()
 
-crud_pin = CRUDPinCollectionAssociation()
+crud_collection_association = CRUDPinCollectionAssociation()

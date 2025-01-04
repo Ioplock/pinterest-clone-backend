@@ -57,4 +57,4 @@ class CRUDPinCollection:
         await db.commit()
         return db_association
 
-crud_pin = CRUDPinCollection()
+crud_collection = CRUDPinCollection()
