@@ -8,6 +8,8 @@ from ...utils.config import config
 class PinCreate(BaseModel):
     title: str = Field(max_length=config["MAX_PIN_TITLE_LENGTH"])
     description: Optional[str] = Field(default=None, max_length=config["MAX_PIN_DESCRIPTION_LENGTH"])
+    owner_id: int
+    visibility: str
     type: str
     tags: Optional[List[str]] = Field(default=None, max_length=config["MAX_PIN_TAGS_COUNT"])
 

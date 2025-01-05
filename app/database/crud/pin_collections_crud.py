@@ -1,6 +1,6 @@
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..models import Pin, PinCollection, PinCollectionAssociation
+from ..models import Pin, PinCollection, VisibilityType
 from ...fastapi.schemas import pin_collections_schemas as schemas
 
 class CRUDPinCollection:
@@ -13,9 +13,13 @@ class CRUDPinCollection:
         result = await db.execute(select(PinCollection))
         return result.scalars().all()
     
+    async def get_pin_collections_by_owner_id(self, db: AsyncSession, owner_id: int):
+        result = await db.execute(select(PinCollection).where(PinCollection.owner_id == owner_id))
+        return result.scalars().all()
+    
     # CREATE
     async def create_pin_collection(self, db: AsyncSession, pin_collection: schemas.PinCollectionCreate):
-        db_pin_collection = PinCollection(title=pin_collection.title)
+        db_pin_collection = PinCollection(title=pin_collection.title, owner_id=pin_collection.owner_id, visibility=pin_collection.visibility)
         db.add(db_pin_collection)
         await db.commit()
         await db.refresh(db_pin_collection)

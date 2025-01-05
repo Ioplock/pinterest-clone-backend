@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 import uvicorn
 
 from .database.database import engine, Base
-from .database.models import User, Pin, FileType, PinTag, PinCollection, PinCollectionAssociation
+from .database.models import *
 from .fastapi.routers import auth_router, users_router, pin_router
 
 app = FastAPI(title="FastAPI Async SQLAlchemy Example")

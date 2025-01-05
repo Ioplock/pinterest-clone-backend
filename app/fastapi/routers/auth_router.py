@@ -5,7 +5,7 @@ from datetime import timedelta
 from ..schemas import users_schemas as schemas
 from ...database.crud.users_crud import crud_user
 from ...database.database import get_db
-from ...utils.auth import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
+from ...utils.jwt_utils import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter(
     prefix="/api/auth",

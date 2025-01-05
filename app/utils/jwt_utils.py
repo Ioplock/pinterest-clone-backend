@@ -2,20 +2,38 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 import secrets
 
-from passlib.context import CryptContext
 from jose import JWTError, jwt
 
 import bcrypt
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, status
+
+from ..utils.jwt_utils import decode_access_token
 from ..fastapi.schemas.users_schemas import TokenData
+from ..database.database import get_db
+from ..database.crud.users_crud import crud_user
 
 # Secret key to encode JWT tokens
 SECRET_KEY = secrets.token_hex(16)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
-# Password hashing context
-# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
+    token_data = decode_access_token(token)
+    if token_data is None or token_data.user_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    user = await crud_user.get_user(db, user_id=token_data.user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a plain password against its hashed version."""

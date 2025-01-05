@@ -2,7 +2,7 @@ from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..models import User
 from ...fastapi.schemas import users_schemas as schemas
-from ...utils.auth import get_password_hash, verify_password
+from ...utils.jwt_utils import get_password_hash, verify_password
 
 class CRUDUser:
     # READ

@@ -1,8 +1,6 @@
-from typing import List
-
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..models import Pin, PinTag, FileType, PinCollection, PinCollectionAssociation
+from ..models import Pin, PinTag, FileType, PinCollection, VisibilityType
 from ...fastapi.schemas import pins_schemas as schemas
 
 class CRUDPin:
@@ -15,11 +13,15 @@ class CRUDPin:
         result = await db.execute(select(Pin).offset(skip).limit(limit))
         return result.scalars().all()
     
+    async def get_pins_by_owner_id(self, db: AsyncSession, owner_id: int):
+        result = await db.execute(select(Pin).where(Pin.owner_id == owner_id))
+        return result.scalars().all()
+    
     # CREATE
     async def create_pin(self, db: AsyncSession, pin: schemas.PinCreate):
         result_db_pin_type = await db.execute(select(FileType).where(FileType.name == pin.type))
         db_pin_type = result_db_pin_type.scalars().first()
-        db_pin = Pin(title=pin.title, description=pin.description, type=db_pin_type, tags=[])
+        db_pin = Pin(title=pin.title, description=pin.description, owner_id=pin.owner_id, type=db_pin_type, tags=[])
         for tag in pin.tags:
             db_tag = await self.__get_or_create_tag(db, tag)
             print(type(db_tag))
